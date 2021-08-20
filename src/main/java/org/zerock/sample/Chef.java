@@ -12,7 +12,11 @@ import lombok.Data;
 //@Data는 @ToString, @EqualsAndHashCode,	@Getter/Setter, @RequiredArgsConstructor를 모두 결합한 형태로 한 번에 자주 사용되는 모든 메서드들을 생성할 수 있다.	
 //@ToString (?)
 //@EqualsAndHashCode (?)
-//@RequiredArgsConstructor (?)
+
+/*@RequiredArgsConstructor
+ * 여러 개의 인스턴스 변수들 중에서 특정한 변수에 대해서만 생성자를 작성하고 싶다면 이 어노테이션을 추가한다.
+ * @NonNull이나 final이 붙은 인스턴스 변수에 대한 생성자를 만들어낸다.
+ * */
 
 
 public class Chef {
