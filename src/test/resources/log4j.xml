@@ -10,6 +10,8 @@
 		</layout>
 	</appender>
 	
+	
+	
 	<!-- Application Loggers -->
 	<logger name="org.zerock.sun">
 		<level value="info" />
@@ -31,7 +33,21 @@
 	<logger name="org.springframework.web">
 		<level value="info" />
 	</logger>
+	
+	<!-- 만일 log4jdbc에서 출력되는 로그를 조절하고 싶다면 추가적인 logger를 지정해서 처리한다. -->
+	<logger name="jdbc.audit">
+		<level value="warn" />
+	</logger>
 
+	<logger name="jdbc.resultset">
+		<level value="warn" />
+	</logger>
+
+	<logger name="jdbc.connection">
+		<level value="warn" />
+	</logger>
+
+	<!-- 테스트 코드가 진행될 때 보여지는 'INFO...'메시지는 이 설정의 영향을 받기 때문이다 -->
 	<!-- Root Logger -->
 	<root>
 		<priority value="info" />
@@ -39,3 +55,12 @@
 	</root>
 	
 </log4j:configuration>
+
+<!-- 
+	log4j:WARN 요소 유형 "log4j:configuration"의 콘텐츠는 "(renderer*,throwableRenderer?,appender*,plugin*,(category|logger)*,root?,(categoryFactory|loggerFactory)?)"과(와) 일치해야 합니다.
+	위의 에러는 log4j.xml을 형식에 맞게 작성해주지 않아서 발생하는 에러였다.
+	<appender></appender>
+	<logger></logger>
+	<root></root>
+	순서대로 작성해줘야 한다.
+-->

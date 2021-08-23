@@ -6,6 +6,8 @@ import java.sql.Connection;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +33,25 @@ import lombok.extern.log4j.Log4j;
 public class DataSourceTests {
 	
 	@Setter(onMethod_ = {@Autowired})
-	//@Setter는 자동으로 setRestaurant()를 컴파일 시 생성한다.
-	//@Setter에서 사용된 onMethod속성은 생성되는 DataSource에 @Autowired어노테이션을 추가하도록 한다. (?)
+	//@Setter는 자동으로 setDataSource를 컴파일 시 생성한다.
+	//@Setter에서 사용된 onMethod속성은 생성되는 dataSource에 @Autowired어노테이션을 추가하도록 한다. (?)
 	private DataSource dataSource;
+	
+	@Setter(onMethod_ = {@Autowired})
+	//@Setter는 자동으로 setSqlSessionFactory를 컴파일 시 생성한다.
+	//@Setter에서 사용된 onMethod속성은 생성되는 sqlSessionFactory에 @Autowired어노테이션을 추가하도록 한다. (?)
+	private SqlSessionFactory sqlSessionFactory;
+	
+	@Test
+	public void testMyBatis() {
+		try(SqlSession session=sqlSessionFactory.openSession(); Connection con=session.getConnection();){
+			log.info(session);
+			log.info(con);
+		}catch(Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	/*testMyBatis()는 설정된 SqlSessionFactory 인터페이스 타입의 SqlSessionFactoryBean을 이용해서 생성하고, 이를 이용해서 Connection까지 테스트한다.*/
 	
 	@Test
 	public void testConnection() {
