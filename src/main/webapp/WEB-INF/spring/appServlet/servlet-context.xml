@@ -16,11 +16,18 @@
 	<resources mapping="/resources/**" location="/resources/" />
 
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<!-- InternalResourceViewResolver의 ViewResolver는 Controller가 반환한 결과를 어떤 View를 통해서 처리하는 것이 좋을지 해석하는 역할을 한다. -->
+	<!-- View는 실제로 응답 보내야 하는 데이터를 JSP등을 이용해서 생성하는 역할을 하는데, 여기서 만들어진 응답은 DispatcherServlet을 통해서 전송된다.
+			모든 Request는 DispatcherServlet을 통하도록 설계되는데 이 방식을 Front-Controller 패턴이라고 한다. -->
 	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
+	<!-- servlet-context.xml에는 <context:component-scan>이라는 태그를 이용해서 지정된 패키지를 조사(스캔)하도록 설정되어 있다. 
+			해당 패키지에 선언된 클래스들을 조사하면서 스프링에서 객체(Bean)설정에 사용되는 어노테이션들을 가진 클래스들을 파악하고
+			필요하다면 이를 객체로 생성해서 관리하게 된다.-->
+	<!-- 자동으로 스프링의 객체(Bean)로 등록된다. -->
 	<context:component-scan base-package="org.zerock.controller" />
 	
 	
