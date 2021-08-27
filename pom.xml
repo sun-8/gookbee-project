@@ -102,7 +102,11 @@
 					<artifactId>jmxri</artifactId>
 				</exclusion>
 			</exclusions>
-			<scope>runtime</scope>
+			<!-- <scope>runtime</scope> -->
+			<!-- src/main/java의 controller패키지에서 클래스를 만들던 중 @Log4j를 사용하려는데 import도 했는데도 불구하고 오류가 뜨는 상황 발생
+				 src/text/java로 코드를 옮기면 오류가 안뜬다. main에서만 생기는 오류인 듯 하다.
+				 Maven Dependencies를 보면 log4j에 불이 꺼져있다. 사용되지 않도록 해놨다는 뜻
+				 위의 코드를 주석처리 해주면 오류가 사라진다.  -->
 		</dependency>
 
 		<!-- @Inject -->
