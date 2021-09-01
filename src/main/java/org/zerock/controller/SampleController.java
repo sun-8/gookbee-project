@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.zerock.domain.SampleDTO;
 import org.zerock.domain.SampleDTOList;
 import org.zerock.domain.TodoDTO;
+import org.zerock.domain.TodoDTO2;
 
 import lombok.extern.log4j.Log4j;
 
@@ -158,4 +159,14 @@ public class SampleController {
 		//todo: TodoDTO(title=test, dueDate=Fri Jan 01 00:01:00 KST 2021)
 		return "ex03";
 	}	
+	
+//@DateTimeFormat//
+
+	@GetMapping("/ex033")
+	public String ex03_2(TodoDTO2 todo2) {
+		/*@InitBinder 어노테이션이 없어야 정상실행된다.
+		 * ?title=test&dueDate=2021/01/01*/
+		log.info("todo2: "+todo2);//todo2: TodoDTO2(title=test, dueDate=Fri Jan 01 00:00:00 KST 2021)
+		return "ex03_2";
+	}
 }
