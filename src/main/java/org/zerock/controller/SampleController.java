@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -163,10 +164,61 @@ public class SampleController {
 //@DateTimeFormat//
 
 	@GetMapping("/ex033")
-	public String ex03_2(TodoDTO2 todo2) {
+	public String ex033(TodoDTO2 todo2) {
 		/*@InitBinder 어노테이션이 없어야 정상실행된다.
 		 * ?title=test&dueDate=2021/01/01*/
 		log.info("todo2: "+todo2);//todo2: TodoDTO2(title=test, dueDate=Fri Jan 01 00:00:00 KST 2021)
-		return "ex03_2";
+		return "ex033";
 	}
+	
+/*Model - 데이터 전달자
+ * Controller의 메서드를 작성할 때 Model이라는 타입을 파라미터로 지정할 수 있는데,
+ * Model 객체는 JSP에 Controller에서 생성된 데이터를 담아서 전달해야 하는 역할을 한다.
+ * 그래서 데이터를 JSP와 같은 View로 전달할 때 Model을 사용한다.
+ * Controller 메서드의 파라미터에 Model 타입이 지정된 경우에 스프링은 특별히 Model타입의 객체를 만들어서 메서드에 주입한다.
+ * Model은 request.setAttribute()와 유사한 역할을 한다.
+ * 메서드의 파라미터를 Model 타입으로 선언하게 되면 자동으로 스프링 MVC에서 Model타입의 객체를 만들어 주기 때문에 
+ * 	필요한 데이터를 담아주는 작업만으로 모든 작업이 완료된다.
+ * Model을 사용해야 하는 경우는 주로 Controller에 전달된 데이터를 이용해서 추가적인 데이터를 가져와야 하는 상황이다.
+ * 	- 리스트 페이지 번호를 파라미터로 전달받고, 실제 데이터를 View로 전달해야 하는 경우
+ * 	- 파라미터들에 대한 처리 후 결과를 전달해야 하는 경우
+ * 
+ * 웹 페이지의 구조는 Request에 전달된 데이터를 가지고 필요하다면 추가적인 데이터를 생성해서 화면으로 전달하는 방식으로 동작한다.
+ * Model의 경우 파라미터로 전달된 데이터는 존재하지 않지만 화면에서 필요한 데이터를 전달하기 위해 사용한다.
+ * 	ex) 페이지 번호는 파라미터로 전달되지만(int page), 결과 데이터를 전달하려면 Model에 담아서 전달한다.(Model m , m.Attribute("page",page);
+ * 
+ * 스프링 MVC의 Controller는 기본적으로 Java Beans 규칙에 맞는 객체는 다시 화면으로 객체를 전달한다.
+ * 	Java Beans의 규칙 - 생성자가 없거나 빈 생성자를 가져야 하며, getter/setter를 가진 클래스의 객체들을 의미
+ * 전달될 대는 클래스명의 앞글자는 소문자로 처리된다.
+ * 반면에 기본 자료형의 경우는 파라미터로 선언하더라도 기본적으로 화면까지 전달되지는 않는다.
+ * */
+	
+	@GetMapping("/ex04")
+	public String ex04(SampleDTO dto,int page) {
+		/* SampleDTO 객체는 getter/setter를 가졌기 때문에 Java Beans의 규칙에 맞는 객체이다.
+		 * 하지만 page 매개변수는 Java Beans의 규칙에 맞지 않기 때문에 화면까지 전달되지 않는다.
+		 * 		?name=sun&age=111&page=9
+		 * */
+		log.info("dto: "+dto);//dto: SampleDTO(name=sun, age=111)
+		log.info("page: "+page);//page: 9
+		return "/sample/ex04";
+	}
+	
+//@ModelAttribute//
+	
+	@GetMapping("/ex044")
+	public String ex044(SampleDTO dto,@ModelAttribute("page") int page) {
+		/*@ModelAttribute는 전달받은 파라미터를 강제로 Model에 담아서 화면에 전달하도록 할 때 필요한 어노테이션이다.
+		 * 이 어노테이션을 적용한 파라미터는 타입에 관계없이 무조건 Model에 담아서 전달되므로, 파라미터로 전달된 데이터를 다시 화면에서 사용해야 할 때 유용하다.
+		 * 기본 자료형에 @ModelAttribute를 적용할 경우에는 반드시 @ModelAttribute("page")와 같이 value값을 지정해야 한다.*/
+		log.info("dto: "+dto);//dto: SampleDTO(name=sun, age=111)
+		log.info("page: "+page);//page: 9
+		return "/sample/ex04";
+	}
+	
+/*RedirectAttributes - Model 타입과 비슷하게 스프링 MVC가 자동으로 전달해주는 타입
+ * 일회성으로 데이터를 전달하는 용도로 사용한다.
+ * response.sendRedirect()와 동일한 용도로 사용한다.
+ * Model과 같이 파라미터로 선언해서 사용하고, addFlashAttribute("이름",값) 메서드를 이용해서
+ * 	화면에 한 번만 사용하고 다음에는 사용되지 않는 데이터를 전달하기 위해서 사용한다.*/
 }
