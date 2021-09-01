@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 /*Controller를 작성할 때 가장 편리한 기능은 파라미터가 자동으로 수집되는 기능이다.
  * 매번 request.getParameter()를 이용하는 불편함을 없앨 수 있다.
  * Controller가 파라미터를 수집하는 방식은 파라미터 타입에 따라 자동으로 변환하는 방식을 이용한다.
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.zerock.domain.SampleDTO;
 import org.zerock.domain.SampleDTOList;
 import org.zerock.domain.TodoDTO;
@@ -219,6 +223,74 @@ public class SampleController {
 /*RedirectAttributes - Model 타입과 비슷하게 스프링 MVC가 자동으로 전달해주는 타입
  * 일회성으로 데이터를 전달하는 용도로 사용한다.
  * response.sendRedirect()와 동일한 용도로 사용한다.
- * Model과 같이 파라미터로 선언해서 사용하고, addFlashAttribute("이름",값) 메서드를 이용해서
- * 	화면에 한 번만 사용하고 다음에는 사용되지 않는 데이터를 전달하기 위해서 사용한다.*/
+ * Model과 같이 파라미터로 선언해서 사용하고, 
+ * 	Redirect Attributes rttr, rttr.addFlashAttribute("이름",값) 메서드를 이용해서
+ * 	화면에 한 번만 사용하고 다음에는 사용되지 않는 데이터를 전달하기 위해서 사용한다.
+ * */
+	
+/*Controller의 리턴 타입
+ * - void : 호출하는 URL과 동일한 이름의 jsp를 의미한다.
+ * - String : jsp를 이용하는 경우 jsp파일의 경로와 파일이름을 나타내기 위해서 사용한다.
+ * 				상황에 따라 다른 화면을 보여줄 필요가 있을 경우 유용하게 사용한다.(if~else와 같은 처리가 필요한 상황)
+ * - VO,DTO 타입 : 주로 JSON 타입의 데이터를 만들어서 반환하는 용도로 사용한다.
+ * - ResponseEntity 타입 : response 할 때 Http 헤더 정보와 내용을 가공하는 용도로 사용한다.
+ * - Model,ModelAndView : Model로 데이터를 반환하거나 화면까지 같이 지정하는 경우에 사용한다.
+ * 		(최근에는 많이 사용하고 있지 않다.)
+ * - HttpHeaders : 응답에 내용 없이 Http 헤더 메시지만 전달하는 용도로 사용한다.
+ * */
+	
+	@GetMapping("/ex05")
+	public void ex05() {
+		/*리턴 타입을 void로 지정.
+		 * 해당 URL의 경로를 그대로 jsp파일의 이름으로 사용하게 된다.
+		 * 	/sample/ex05
+		 * View에 위의 경로로 저장된 jsp가 없으면  '[/WEB-INF/views/sample/ex05.jsp]을(를) 찾을 수 없습니다.' 라는 404에러를 발생시킨다.
+		 * 이것은 servlet-context.xml의 InternalResourceViewResolver 설정과 같이 맞물려 URL경로를 View로 처리하기 때문에 생기는 결과이다.*/
+		log.info("/ex05.............");
+	}
+	
+	@GetMapping("/ex06")
+	public @ResponseBody SampleDTO ex06() {
+		/*리턴 타입을 객체 타입으로 지정
+		 * VO(Value Object)나 DTO(Data Transfer Object)타입 등 복합적인 데이터가 들어간 객체 타입으로 지정할 수 있다.
+		 * 주로 JSON 데이터를 만들어 내는 용도로 사용하는데 이를 위해서 pom.xml에 jackson-databind 라이브러리를 추가해야 한다.
+		 * 자동으로 브라우저에 JSON 타입으로 객체를 변환해서 전달하고
+		 * 개발자 도구를 통해서 살펴보면 서버에서 전송하는 MINE타입이 'application/json'으로 처리되는 것을 볼 수 있다.
+		 * 만약 jackson-databind 라이브러리가 포함되지 않으면 'No converter found for return value of type: 클래스경로'
+		 * 라는 500에러 페이지가 뜬다.
+		 * 
+		 * @ResponseBody 어노테이션은 jsp파일을 만들지 않고도 브라우저에 키,값 쌍의 JSON 데이터를 쉽게 만들 수 있다.
+		 * JSON의 키는 리턴 타입의 변수명이 된다.
+		 * */
+		log.info("/ex06.............");
+		SampleDTO dto=new SampleDTO();
+		dto.setName("sun");
+		dto.setAge(111);
+		return dto;
+		//{"name":"sun","age":111}
+	}
+	
+	@GetMapping("/ex07")
+	public ResponseEntity<String> ex07(){
+		/*리턴타입을 ResponseEntity 타입으로 지정
+		 * 스프링 MVC는 HttpServletRequest나 HttpServletResponse를 직접 핸들링 하지 않아도 이런 작업이 가능하도록 작성되어 있기 때문에
+		 * 이러한 처리를 위해 ResponseEntity를 사용한다.
+		 * HttpHeader 객체를 같이 전달할 수 있고, 원하는 HTTP 헤더 메시지를 가공하는 것이 가능하다.
+		 * 이 메서드의 경우 브라우저에는 JSON타입이라는 헤더 메시지와 200 OK라는 상태 코드를 전송한다.
+		 * 		개발자 도구 -> Network -> ctrl+r -> ex07 눌러서 확인
+		 * */
+		log.info("/ex07.............");
+		String msg="{\"name\": \"서니\"}";//{name: 서니}
+		HttpHeaders header=new HttpHeaders();
+		//새 헤더 밑 해당 값을 HttpHeaders 컬렉션에 삽입한다.
+		header.add("Content-Type", "application/json;charset=utf-8");
+		/*지정된 헤더 및 헤더 값을 HttpHeades 컬렉션에 추가한다.
+		 * void add(String name, String value)
+		 * 	name - 컬렉션에 추가할 헤더.
+		 * 	value - 헤더의 내용.
+		 * 지정된 헤더가 없으면 add메서드는 이름/값 쌍 목록에 새 헤더를 삽입한다.
+		 * 지정된 헤더가 있다면 value는 헤더와 연결된 값의 쉼표로 구분된 목록에 추가된다.
+		 * */
+		return new ResponseEntity<>(msg,header,HttpStatus.OK);
+	}
 }
