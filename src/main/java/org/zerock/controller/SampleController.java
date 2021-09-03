@@ -16,10 +16,12 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.zerock.domain.SampleDTO;
 import org.zerock.domain.SampleDTOList;
 import org.zerock.domain.TodoDTO;
@@ -292,5 +294,31 @@ public class SampleController {
 		 * 지정된 헤더가 있다면 value는 헤더와 연결된 값의 쉼표로 구분된 목록에 추가된다.
 		 * */
 		return new ResponseEntity<>(msg,header,HttpStatus.OK);
+	}
+	
+//파일 업로드 처리 - byte[]처리는 나중에 (업로드 정보가 올바르게 처리되는지 확인하는 예제)//
+	
+	/*파일 업로드 폼*/
+	@GetMapping("/exUpload")
+	public void exUpload() {
+		log.info("/exUpload..........");
+	}
+	
+	/*파일 업로드*/
+	@PostMapping("/exUploadPost")
+	public void exUploadPost(ArrayList<MultipartFile> files) {
+		/*MultipartFile 인터페이스는 파일을 업로드 할 때 사용한다.
+		 * 멀티파트 요청에서 수신된 업로드된 파일의 표현이며,파일 내용은 메모리에 저장되거나 일시적으로 디스크에 저장된다.
+		 * 사용자는 원하는 경우 파일 내용을 세션 수준 또는 영구 저장소에 복사할 책임이 있다. 임시 저장소는 요청 처리가 끝나면 지워진다.*/
+		files.forEach(file -> {
+			log.info("---------------------------------------");
+			log.info("name: "+file.getOriginalFilename());
+			/*String getOriginalFilename()
+			 * 클라이언트의 파일 시스템에 있는 원래 파일 이름을 반환한다.
+			 * 원래 파일 이름 또는 다중 부분 형식에서 파일이 선택되지 않았거나(null) 정의되지 않았거나 사용할 수 없는 경우 빈 문자열*/
+			log.info("size: "+file.getSize());
+			/*long getSize()
+			 * 파일의 크기를 바이트 단위로 반환한다.*/
+		});
 	}
 }
