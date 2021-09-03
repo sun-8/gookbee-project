@@ -28,6 +28,14 @@
 			<param-name>contextConfigLocation</param-name>
 			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
 		</init-param>
+		
+		<!-- 스프링 MVC의 모든 요청을 DispatcherServlet을 이용해서 처리되므로 404 에러도 같이 처리할 수 있도록 web.xml을 수정한다.-->
+		<init-param>
+			<param-name>throwExceptionIfNoHandlerFound</param-name>
+			<param-value>true</param-value>
+		</init-param> 
+		<!-- 위와 같은 방법 말고 다른 방식으로 작성하는 방식도 있다. -->
+		
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 		
@@ -35,5 +43,12 @@
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+	
+	<!-- 에러 페이지 지정 - @ExceptionHandler(Exception.class)로 하는데, Exception.class가 예외코드중에서 하나여야 한다. 안그러면 에러남.
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/views/custom404.jsp</location>
+	</error-page> 
+	-->
 
 </web-app>
